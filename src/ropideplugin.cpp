@@ -22,6 +22,7 @@
 
 #include <QAction>
 #include <QFile>
+#include <QNetworkProxy>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QIcon>
@@ -36,6 +37,23 @@ RopIDEPlugin::RopIDEPlugin(QObject *parent, const QVariantList &args)
     m_settings = new Settings(this);
     m_settings->load();
     m_market = new MarketClient(this);
+    // Qt 默认不读终端的 http(s)_proxy 环境变量；把它作为市场请求的备用路由，
+    // 默认直连、失败自动切换（ropide.pages.dev 走部分代理不可达，直连反而正常）
+    QByteArray proxyEnv = qgetenv("https_proxy");
+    if (proxyEnv.isEmpty()) {
+        proxyEnv = qgetenv("all_proxy");
+    }
+    const QUrl proxyUrl = QUrl::fromUserInput(QString::fromLocal8Bit(proxyEnv));
+    if (proxyUrl.isValid() && !proxyUrl.host().isEmpty()
+        && (proxyUrl.host() != QStringLiteral("127.0.0.1") || proxyUrl.port() > 0)) {
+        QNetworkProxy proxy(QNetworkProxy::HttpProxy, proxyUrl.host(),
+                            proxyUrl.port() > 0 ? proxyUrl.port() : 8080);
+        if (!proxyUrl.userName().isEmpty()) {
+            proxy.setUser(proxyUrl.userName());
+            proxy.setPassword(proxyUrl.password());
+        }
+        m_market->setAlternateProxy(proxy);
+    }
     m_emu = new EmuClient(this);
 }
 

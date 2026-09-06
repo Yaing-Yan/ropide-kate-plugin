@@ -13,6 +13,8 @@
 #include <QNetworkRequest>
 #include <QUrl>
 #include <QUrlQuery>
+#include <QDebug>
+#include <memory>
 
 namespace Rop
 {
@@ -23,6 +25,44 @@ MarketClient::MarketClient(QObject *parent)
     : QObject(parent)
     , m_nam(new QNetworkAccessManager(this))
 {
+}
+
+void MarketClient::setAlternateProxy(const QNetworkProxy &proxy)
+{
+    if (proxy.type() == QNetworkProxy::NoProxy) {
+        m_namAlt = nullptr;
+        return;
+    }
+    m_namAlt = new QNetworkAccessManager(this);
+    m_namAlt->setProxy(proxy);
+}
+
+void MarketClient::runWithFallback(const QNetworkRequest &req, bool isPost, const QByteArray &body,
+                                   const std::function<void(QNetworkReply *)> &handler)
+{
+    auto attempt = std::make_shared<std::function<void(bool)>>();
+    *attempt = [this, attempt, req, isPost, body, handler](bool alt) {
+        QNetworkAccessManager *nam = (alt && m_namAlt) ? m_namAlt : m_nam;
+        QNetworkRequest r(req);
+        QNetworkReply *reply = isPost ? nam->post(r, body) : nam->get(r);
+        connect(reply, &QNetworkReply::finished, this,
+                [this, attempt, reply, req, isPost, body, handler, alt]() {
+                    // 网络层错误（无 HTTP 状态码）才值得换路由重试；HTTP 4xx/5xx 直接交结果
+                    const bool networkLayerError =
+                        reply->error() != QNetworkReply::NoError
+                        && !reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).isValid();
+                    if (networkLayerError && !alt && m_namAlt) {
+                        const QUrl url = reply->url();
+                        const QString err = reply->errorString();
+                        reply->deleteLater();
+                        qDebug() << "[ropide] market request failed via default route, retrying via proxy:" << url << err;
+                        (*attempt)(true);
+                        return;
+                    }
+                    handler(reply);
+                });
+    };
+    (*attempt)(false);
 }
 
 qint64 MarketClient::itemTime(const MarketItem &it)
@@ -70,9 +110,7 @@ void MarketClient::fetchList()
 {
     QNetworkRequest req{QUrl(QString::fromLatin1(MARKET_BASE_URL) + QStringLiteral("/api/market"))};
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    QNetworkReply *reply = m_nam->get(req);
-    req.setTransferTimeout(15000);
-    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+    runWithFallback(req, false, {}, [this](QNetworkReply *reply) {
         reply->deleteLater();
         MarketListResult r;
         if (reply->error() != QNetworkReply::NoError) {
@@ -101,9 +139,8 @@ void MarketClient::fetchItem(const QString &id)
     url.setQuery(query);
     QNetworkRequest req{url};
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    QNetworkReply *reply = m_nam->get(req);
     req.setTransferTimeout(15000);
-    connect(reply, &QNetworkReply::finished, this, [this, reply, id]() {
+    runWithFallback(req, false, {}, [this, id](QNetworkReply *reply) {
         reply->deleteLater();
         if (reply->error() != QNetworkReply::NoError) {
             Q_EMIT itemFinished(id, false, QString(),
@@ -130,9 +167,7 @@ void MarketClient::fetchChallenge()
     url.setQuery(query);
     QNetworkRequest req{url};
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    QNetworkReply *reply = m_nam->get(req);
-    req.setTransferTimeout(15000);
-    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+    runWithFallback(req, false, {}, [this](QNetworkReply *reply) {
         reply->deleteLater();
         MarketChallengeResult r;
         if (reply->error() != QNetworkReply::NoError) {
@@ -174,9 +209,8 @@ void MarketClient::publish(const QString &name, const QString &author, const QSt
     QNetworkRequest req{QUrl(QString::fromLatin1(MARKET_BASE_URL) + QStringLiteral("/api/market"))};
     req.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
     req.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-    QNetworkReply *reply = m_nam->post(req, QJsonDocument(payload).toJson(QJsonDocument::Compact));
-    req.setTransferTimeout(30000);
-    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+    runWithFallback(req, true, QJsonDocument(payload).toJson(QJsonDocument::Compact),
+                    [this](QNetworkReply *reply) {
         reply->deleteLater();
         MarketPublishResult r;
         const int status = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();

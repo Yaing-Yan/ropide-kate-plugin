@@ -8,6 +8,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QNetworkAccessManager>
+#include <QNetworkProxy>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QUrl>
@@ -26,6 +27,8 @@ EmuClient::EmuClient(QObject *parent)
     : QObject(parent)
     , m_nam(new QNetworkAccessManager(this))
 {
+    // MCP 在 127.0.0.1：显式直连，避免被应用级代理劫持
+    m_nam->setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
 }
 
 QByteArray EmuClient::parseHexBytes(const QString &s)

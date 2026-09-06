@@ -7,9 +7,13 @@
  */
 #pragma once
 
+#include <QNetworkProxy>
+#include <QNetworkReply>
 #include <QObject>
 #include <QString>
 #include <QVector>
+
+#include <functional>
 
 class QNetworkAccessManager;
 
@@ -59,6 +63,9 @@ public:
                  const QString &description, const QString &ropDataJson,
                  const QString &challengeToken, const QString &challengeAnswer);
 
+    /** 设置备用代理（一般来自 https_proxy 环境变量）；网络层失败时自动回退重试。 */
+    void setAlternateProxy(const QNetworkProxy &proxy);
+
     /** 条目时间戳统一成 epoch 毫秒（兼容 number / 数字字符串 / ISO 字符串）。 */
     static qint64 itemTime(const MarketItem &it);
     /** 解析 /api/market 返回的列表 JSON；非数组返回 false。 */
@@ -72,7 +79,13 @@ Q_SIGNALS:
     void publishFinished(const Rop::MarketPublishResult &result);
 
 private:
-    QNetworkAccessManager *m_nam = nullptr;
+    /** 先走默认路由，网络层错误时换备用代理重试一次，最后交给 handler。 */
+    void runWithFallback(const QNetworkRequest &req, bool isPost, const QByteArray &body,
+                         const std::function<void(QNetworkReply *)> &handler);
+
+    QNetworkAccessManager *m_nam = nullptr;       // 默认路由（直连）
+    QNetworkAccessManager *m_namAlt = nullptr;    // 备用代理路由（可空）
+
 };
 
 } // namespace Rop

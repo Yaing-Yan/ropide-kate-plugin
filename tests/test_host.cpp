@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
     // 看门狗：无论如何 15 秒后退出
-    QTimer::singleShot(15000, &app, [&app]() {
+    QTimer::singleShot(90000, &app, [&app]() {
         std::cerr << "TIMEOUT" << std::endl;
         app.exit(3);
     });
@@ -103,6 +103,11 @@ int main(int argc, char **argv)
     view->activateGadgetsTab();
     view->activateEditorTab();
 
+    // 市场标签页：切过去触发拉取，几秒后应能看到列表/失败提示（不再空白）
+    QTimer::singleShot(300, &app, [view]() {
+        view->activateMarketTab();
+    });
+
     QTimer::singleShot(200, &app, [&]() {
         // 写回校验：文档应被序列化为紧凑 JSON 且 input 含追加内容前保持一致
         const QString after = doc->text();
@@ -124,9 +129,15 @@ int main(int argc, char **argv)
             return;
         }
         std::cout << "OK: document round-trip preserved" << std::endl;
-        view->grab().save(shotPath);
-        std::cout << "OK: screenshot saved to " << shotPath.toStdString() << std::endl;
-        app.exit(0);
+        // 等市场请求完成后再截第二张图并退出
+        QTimer *marketTimer = new QTimer(&app);
+        marketTimer->setSingleShot(true);
+        QObject::connect(marketTimer, &QTimer::timeout, &app, [view, shotPath, &app]() {
+            view->grab().save(shotPath);
+            std::cout << "OK: screenshot saved to " << shotPath.toStdString() << std::endl;
+            app.exit(0);
+        });
+        marketTimer->start(30000);
     });
 
     return app.exec();

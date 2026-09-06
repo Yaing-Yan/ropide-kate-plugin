@@ -241,6 +241,13 @@ RopToolView::RopToolView(RopIDEPlugin *plugin, KTextEditor::MainWindow *mainWind
             });
 
     connect(m_plugin->settings(), &Settings::changed, this, &RopToolView::syncSettingsUi);
+
+    // 直接点击「程序广场」标签页时也要拉取列表（原来只在菜单动作里拉取，导致空白）
+    connect(m_tabs, &QTabWidget::currentChanged, this, [this](int idx) {
+        if (idx == 3) {
+            openMarketTab();
+        }
+    });
 }
 
 RopToolView::~RopToolView()
@@ -1078,6 +1085,7 @@ QWidget *RopToolView::buildMarketTab()
 
     m_marketList = new QListWidget(root);
     layout->addWidget(m_marketList, 1);
+    m_marketList->addItem(t("marketEmpty"));
 
     connect(m_marketSearch, &QLineEdit::textChanged, this, &RopToolView::refreshMarketList);
     connect(btnPublish, &QPushButton::clicked, this, &RopToolView::openPublishDialog);
@@ -1932,11 +1940,15 @@ void RopToolView::activateGadgetsTab()
 
 void RopToolView::activateMarketTab()
 {
+    m_tabs->setCurrentIndex(3); // 触发 currentChanged → openMarketTab
+}
+
+void RopToolView::openMarketTab()
+{
     m_marketSearch->clear();
     m_marketLoading = true;
     refreshMarketList();
-    m_tabs->setCurrentIndex(3);
-    // 打开广场：拉最新列表，成功后标记已读
+    // 拉最新列表，成功后标记已读
     auto conn = std::make_shared<QMetaObject::Connection>();
     *conn = connect(m_plugin->market(), &MarketClient::listFinished, this,
                     [this, conn](const MarketListResult &r) {

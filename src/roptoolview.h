@@ -105,6 +105,7 @@ private:
     void refreshMarketList();
     void downloadMarketItem(const QString &id);
     void openPublishDialog();
+    void openMarketTab();
     void checkMarketUnread();
     void updateMarketBadge(int unread);
 
