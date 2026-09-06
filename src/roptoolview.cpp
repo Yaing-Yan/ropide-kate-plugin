@@ -1084,6 +1084,7 @@ QWidget *RopToolView::buildMarketTab()
     layout->addWidget(bar);
 
     m_marketList = new QListWidget(root);
+    m_marketList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     layout->addWidget(m_marketList, 1);
     m_marketList->addItem(t("marketEmpty"));
 
@@ -1145,6 +1146,7 @@ void RopToolView::refreshMarketList()
                                 card);
         info->setTextFormat(Qt::RichText);
         info->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+        info->setWordWrap(true);
         auto *btn = new QPushButton(m_downloadingId == it.id ? t("downloading") : t("download"), card);
         const QString id = it.id;
         connect(btn, &QPushButton::clicked, this, [this, id]() {
@@ -1153,7 +1155,9 @@ void RopToolView::refreshMarketList()
         btn->setEnabled(m_downloadingId != it.id);
         cardLayout->addWidget(info, 1);
         cardLayout->addWidget(btn);
-        item->setSizeHint(card->sizeHint());
+        // 宽度贴合视口（出现下载按钮的最小宽度），高度按内容；避免横向滚动条
+        const int w = qMax(240, m_marketList->viewport()->width() - 10);
+        item->setSizeHint(QSize(w, card->sizeHint().height()));
         m_marketList->setItemWidget(item, card);
     };
     for (const MarketItem &it : featured) {
