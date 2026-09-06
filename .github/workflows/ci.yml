@@ -1,0 +1,92 @@
+name: AUTO BUILD
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Test (Arch Linux)
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:base-devel
+    steps:
+      - name: Install dependencies
+        run: |
+          pacman -Syu --noconfirm --needed \
+            git cmake make gcc nodejs \
+            qt6-base \
+            kcoreaddons kconfig ki18n ktexteditor kxmlgui
+
+      - name: Checkout ropide-kate-plugin
+        uses: actions/checkout@v4
+
+      # 交叉验证需要原版 JS 编译器
+      - name: Checkout ropide-vscode-plugin (for crosscheck)
+        uses: actions/checkout@v4
+        with:
+          repository: Yaing-Yan/ropide-vscode-plugin
+          path: ropide-vscode-plugin
+
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build -j"$(nproc)"
+
+      # 编译器移植正确性：node 跑原版 media/compiler.js，与 C++ 对拍
+      - name: Compiler crosscheck (node vs C++)
+        run: |
+          ROPIDE_VSCODE_PLUGIN_DIR="$PWD/ropide-vscode-plugin" \
+          CPP_BIN="$PWD/build/ropide-test-compiler" \
+          node tests/crosscheck.mjs
+
+      - name: Headless smoke test
+        run: |
+          QT_QPA_PLATFORM=offscreen \
+          ./build/ropide-test-host "$PWD/build/ropidekate.so" /tmp/ropide-host.png
+
+      - name: Package
+        run: |
+          mkdir -p dist
+          cp build/ropidekate.so dist/
+          cp icon.png dist/
+          {
+            echo "RopIDE for Kate $([[ "$GITHUB_REF" == refs/tags/v* ]] && echo "${GITHUB_REF#refs/tags/}" || echo "build-${GITHUB_SHA::7}")"
+            echo
+            echo "安装（系统级）："
+            echo "  sudo cp ropidekate.so /usr/lib/qt6/plugins/kf6/ktexteditor/"
+            echo "  重启 Kate → 设置 → 配置 Kate → 插件 → 勾选 RopIDE"
+            echo
+            echo "更多信息见仓库 README。许可证：GPL-3.0"
+          } > dist/INSTALL.txt
+          tar czf "dist/ropide-kate-plugin.tar.gz" -C dist ropidekate.so INSTALL.txt
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ropide-kate-plugin
+          path: dist/ropide-kate-plugin.tar.gz
+
+  release:
+    name: Release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ropide-kate-plugin
+          path: dist
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/ropide-kate-plugin.tar.gz
+          generate_release_notes: true

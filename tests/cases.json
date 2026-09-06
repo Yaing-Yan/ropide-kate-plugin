@@ -1,0 +1,138 @@
+[
+  {
+    "name": "gadget-basic",
+    "input": "#pop-er0;",
+    "leftStartAddress": "E9E0",
+    "rightStartAddress": "D710",
+    "gadgets": [{ "name": "pop-er0", "addr": "121A8", "desc": "赋值 ER0", "tags": [] }]
+  },
+  {
+    "name": "hex-mixed",
+    "input": "12 34 ab\ncd",
+    "leftStartAddress": "0",
+    "rightStartAddress": "0",
+    "gadgets": []
+  },
+  {
+    "name": "value-block",
+    "input": "[0100]",
+    "leftStartAddress": "0",
+    "rightStartAddress": "0",
+    "gadgets": []
+  },
+  {
+    "name": "expr-hex",
+    "input": "[a0 - 10]",
+    "leftStartAddress": "0",
+    "rightStartAddress": "0",
+    "gadgets": []
+  },
+  {
+    "name": "deferred-forward-const",
+    "input": "[$base + 1]\n$base = 100;",
+    "leftStartAddress": "0",
+    "rightStartAddress": "0",
+    "gadgets": []
+  },
+  {
+    "name": "anchor-right",
+    "input": "<top>\n#pop-er0;\n[$top]",
+    "leftStartAddress": "E9E0",
+    "rightStartAddress": "D710",
+    "gadgets": [{ "name": "pop-er0", "addr": "121A8", "desc": "", "tags": [] }]
+  },
+  {
+    "name": "anchor-left",
+    "input": "<-lft>\n[$lft]",
+    "leftStartAddress": "E9E0",
+    "rightStartAddress": "D710",
+    "gadgets": []
+  },
+  {
+    "name": "gadget-allow00-false",
+    "input": "#-pop-er0;",
+    "leftStartAddress": "0",
+    "rightStartAddress": "0",
+    "gadgets": [{ "name": "pop-er0", "addr": "121A8", "desc": "", "tags": [] }]
+  },
+  {
+    "name": "constant-def",
+    "input": "$a = 10;\n[$a + 1]",
+    "leftStartAddress": "0",
+    "rightStartAddress": "0",
+    "gadgets": []
+  },
+  {
+    "name": "errors",
+    "input": "#nogadget;\n$x = zz;\n[qq]",
+    "leftStartAddress": "0",
+    "rightStartAddress": "0",
+    "gadgets": []
+  },
+  {
+    "name": "comment-lines",
+    "input": "// hi\n#pop-er0; // mid\n12",
+    "leftStartAddress": "0",
+    "rightStartAddress": "0",
+    "gadgets": [{ "name": "pop-er0", "addr": "121A8", "desc": "", "tags": [] }]
+  },
+  {
+    "name": "empty",
+    "input": "",
+    "leftStartAddress": "0",
+    "rightStartAddress": "0",
+    "gadgets": []
+  },
+  {
+    "name": "tab-between-hex",
+    "input": "a\tb",
+    "leftStartAddress": "0",
+    "rightStartAddress": "0",
+    "gadgets": []
+  },
+  {
+    "name": "dup-anchor-name",
+    "input": "<x><x>",
+    "leftStartAddress": "0",
+    "rightStartAddress": "1000",
+    "gadgets": []
+  },
+  {
+    "name": "dup-constant",
+    "input": "$a = 1;\n$a = 2;",
+    "leftStartAddress": "0",
+    "rightStartAddress": "0",
+    "gadgets": []
+  },
+  {
+    "name": "value-out-of-range",
+    "input": "[1ffff]",
+    "leftStartAddress": "0",
+    "rightStartAddress": "0",
+    "gadgets": []
+  },
+  {
+    "name": "negative-value",
+    "input": "[-1]",
+    "leftStartAddress": "0",
+    "rightStartAddress": "0",
+    "gadgets": []
+  },
+  {
+    "name": "gadget-empty-addr-quirk",
+    "input": "#weird;",
+    "leftStartAddress": "0",
+    "rightStartAddress": "0",
+    "gadgets": [{ "name": "weird", "addr": "", "desc": "", "tags": [] }]
+  },
+  {
+    "name": "mixed-realistic",
+    "input": "// demo\n$st = E9E0;\n<loop>\n#pop-er0;\n[$loop + 2]\n12 34\n#-pop-er2;\n[$st - 1]",
+    "leftStartAddress": "E9E0",
+    "rightStartAddress": "D710",
+    "gadgets": [
+      { "name": "pop-er0", "addr": "121A8", "desc": "", "tags": [] },
+      { "name": "pop-er2", "addr": "18814", "desc": "", "tags": [] }
+    ]
+  }
+]

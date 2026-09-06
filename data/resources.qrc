@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="/ropidekate">
+    <file alias="icon.png">../icon.png</file>
+    <file alias="presets/verf.json">verf.json</file>
+    <file alias="presets/verc.json">verc.json</file>
+    <file alias="kxmlgui5/ropidekate/ropidekateui.rc">ropidekateui.rc</file>
+  </qresource>
+</RCC>

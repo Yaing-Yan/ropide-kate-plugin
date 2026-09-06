@@ -1,0 +1,22 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "yaing-yan@users.noreply.github.com",
+                "Name": "Yaing-Yan"
+            }
+        ],
+        "Category": "Tools",
+        "Description": "RopIDE editor for CASIO fx-991 CN X ROP (.rop) files: syntax highlighting, address gutters, gadget manager, one-click compile.",
+        "Description[zh_CN]": "CASIO fx-991 CN X ROP (.rop) 文件的 RopIDE 编辑器：语法高亮、地址栏、gadget 管理器、一键编译。",
+        "Id": "ropidekate",
+        "License": "GPL-3.0",
+        "Name": "RopIDE",
+        "Name[zh_CN]": "RopIDE",
+        "Version": "0.1.0",
+        "Website": "https://github.com/Yaing-Yan/ropide-kate-plugin"
+    },
+    "X-KDE-ServiceTypes": [
+        "KTextEditor/Plugin"
+    ]
+}

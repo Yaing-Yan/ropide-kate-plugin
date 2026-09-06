@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
+<gui name="ropidekate" library="ropidekate" version="1">
+  <MenuBar>
+    <Menu name="ropide" noMerge="1">
+      <text>&amp;RopIDE</text>
+      <Action name="ropide_new"/>
+      <Action name="ropide_open"/>
+      <Separator/>
+      <Action name="ropide_compile"/>
+      <Action name="ropide_gadgets"/>
+      <Action name="ropide_market"/>
+      <Separator/>
+      <Action name="ropide_about"/>
+    </Menu>
+  </MenuBar>
+</gui>
