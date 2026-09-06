@@ -2,7 +2,7 @@
   <img src="media/banner.png" alt="RopIDE for Kate" width="100%" />
 </p>
 
-# RopIDE for Kate
+# RopIDE for Kate （Still on developing, I don't recommand you to use.）
 
 [![AUTO BUILD](https://github.com/Yaing-Yan/ropide-kate-plugin/actions/workflows/ci.yml/badge.svg)](https://github.com/Yaing-Yan/ropide-kate-plugin/actions/workflows/ci.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
