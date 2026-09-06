@@ -35,7 +35,7 @@ jobs:
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release
 
       - name: Build
-        run: cmake --build build -j"$(nproc)"
+        run: cmake --build build -j"$(nproc)" --target ropidekate ropide-test-compiler ropide-test-host
 
       # 编译器移植正确性：node 跑原版 media/compiler.js，与 C++ 对拍
       - name: Compiler crosscheck (node vs C++)
