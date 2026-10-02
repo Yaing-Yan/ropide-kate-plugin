@@ -25,7 +25,7 @@ jobs:
         run: |
           set -o pipefail
           pacman -Syu --noconfirm --needed \
-            git cmake make gcc \
+            git cmake make gcc gdb \
             qt6-base \
             kcoreaddons kconfig ki18n ktexteditor kxmlgui \
             noto-fonts noto-fonts-cjk noto-fonts-emoji \
@@ -49,7 +49,12 @@ jobs:
           set -o pipefail
           mkdir -p shots
           QT_QPA_PLATFORM=offscreen \
-            ./build/ropide-shot-host "$PWD/build/ropidekate.so" "$PWD/shots" 2>&1 | tee -a ci-shots.log
+            ./build/ropide-shot-host "$PWD/build/ropidekate.so" "$PWD/shots" 2>&1 | tee -a ci-shots.log || {
+            echo "== crashed; rerun under gdb ==" | tee -a ci-shots.log
+            QT_QPA_PLATFORM=offscreen gdb -batch -ex run -ex "bt 30" \
+              --args ./build/ropide-shot-host "$PWD/build/ropidekate.so" "$PWD/shots" \
+              2>&1 | tee -a ci-shots.log
+            }
           ls -la shots | tee -a ci-shots.log
 
       - name: Publish screenshots + build log to the branch
