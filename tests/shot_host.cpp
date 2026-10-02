@@ -282,7 +282,7 @@ int main(int argc, char **argv)
         // 判断高亮是否真的写进了布局
         const QTextBlock blk = code->document()->findBlockByNumber(1);
         if (QTextLayout *lay = blk.layout()) {
-            const auto fr = lay->additionalFormats();
+            const auto fr = lay->formats(); // Qt6 的 additionalFormats 读取口叫 formats()
             std::cout << "DEBUG layout formats count=" << fr.size() << std::endl;
             for (const QTextLayout::FormatRange &r : fr) {
                 std::cout << "  range start=" << r.start << " len=" << r.length
