@@ -3,8 +3,11 @@ name: Screenshots
 # 无头渲染 RopIDE 工具面板的各个标签页，把 PNG 作为 artifact 上传。
 # 手动触发：Actions → Screenshots → Run workflow（可选分支）
 #   或：gh workflow run screenshots.yml --ref <branch>
+# workflow_dispatch 只认默认分支上已存在的工作流，所以在 arena/* 分支上也监听 push。
 on:
   workflow_dispatch:
+  push:
+    branches: ['arena/**']
 
 jobs:
   shots:
