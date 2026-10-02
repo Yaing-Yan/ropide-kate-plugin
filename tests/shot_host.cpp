@@ -271,8 +271,8 @@ int main(int argc, char **argv)
 
     // 2.5) 调试：离屏 grab 里语法高亮颜色能不能画出来
     {
-        const auto probe = parseRopInput(code->toPlainText(), {}, QStringLiteral("E9E0"),
-                                         QStringLiteral("D710"));
+        const auto probe = Rop::parseRopInput(code->toPlainText(), {}, QStringLiteral("E9E0"),
+                                              QStringLiteral("D710"));
         std::cout << "DEBUG parse lines=" << probe.highlightLines.size()
                   << " line1 spans="
                   << (probe.highlightLines.size() > 1 ? probe.highlightLines.at(1).size() : -1)
