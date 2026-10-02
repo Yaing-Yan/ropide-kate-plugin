@@ -1,0 +1,73 @@
+-- The CXX compiler identification is GNU 16.2.1
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/sbin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Performing Test HAVE_STDATOMIC
+-- Performing Test HAVE_STDATOMIC - Success
+-- Found WrapAtomic: TRUE
+-- Found OpenGL: /usr/lib/libOpenGL.so
+-- Found WrapOpenGL: TRUE
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Found Gettext: /usr/sbin/msgmerge (found version "1.0")
+-- Found X11: /usr/include
+-- Looking for XOpenDisplay in /usr/lib/libX11.so;/usr/lib/libXext.so
+-- Looking for XOpenDisplay in /usr/lib/libX11.so;/usr/lib/libXext.so - found
+-- Looking for gethostbyname
+-- Looking for gethostbyname - found
+-- Looking for connect
+-- Looking for connect - found
+-- Looking for remove
+-- Looking for remove - found
+-- Looking for shmat
+-- Looking for shmat - found
+-- Looking for IceConnectionNumber in ICE
+-- Looking for IceConnectionNumber in ICE - found
+-- Configuring done (1.6s)
+-- Generating done (0.1s)
+-- Build files have been written to: /__w/ropide-kate-plugin/ropide-kate-plugin/build
+[  0%] Built target ropidekate_autogen_timestamp_deps
+[  6%] Automatic MOC for target ropidekate
+[  6%] Built target ropidekate_autogen
+[ 13%] Automatic RCC for data/resources.qrc
+[ 26%] Building CXX object CMakeFiles/ropidekate.dir/ropidekate_autogen/mocs_compilation.cpp.o
+[ 26%] Building CXX object CMakeFiles/ropidekate.dir/src/rop.cpp.o
+[ 33%] Building CXX object CMakeFiles/ropidekate.dir/src/compiler.cpp.o
+[ 40%] Building CXX object CMakeFiles/ropidekate.dir/src/settings.cpp.o
+[ 46%] Building CXX object CMakeFiles/ropidekate.dir/src/presets.cpp.o
+[ 53%] Building CXX object CMakeFiles/ropidekate.dir/src/market.cpp.o
+[ 60%] Building CXX object CMakeFiles/ropidekate.dir/src/emu.cpp.o
+[ 66%] Building CXX object CMakeFiles/ropidekate.dir/src/ropcodeeditor.cpp.o
+[ 73%] Building CXX object CMakeFiles/ropidekate.dir/src/roptoolview.cpp.o
+[ 80%] Building CXX object CMakeFiles/ropidekate.dir/src/ropideplugin.cpp.o
+[ 86%] Building CXX object CMakeFiles/ropidekate.dir/ropidekate_autogen/QYFM2Z2WYQ/qrc_resources.cpp.o
+[ 93%] Linking CXX shared module ropidekate.so
+[100%] Built target ropidekate
+[  0%] Built target ropide-shot-host_autogen_timestamp_deps
+[  6%] Automatic MOC for target ropide-shot-host
+[  6%] Built target ropide-shot-host_autogen
+[ 12%] Automatic RCC for data/resources.qrc
+[ 25%] Building CXX object CMakeFiles/ropide-shot-host.dir/ropide-shot-host_autogen/mocs_compilation.cpp.o
+[ 25%] Building CXX object CMakeFiles/ropide-shot-host.dir/src/rop.cpp.o
+[ 31%] Building CXX object CMakeFiles/ropide-shot-host.dir/tests/shot_host.cpp.o
+[ 37%] Building CXX object CMakeFiles/ropide-shot-host.dir/src/compiler.cpp.o
+[ 43%] Building CXX object CMakeFiles/ropide-shot-host.dir/src/settings.cpp.o
+/__w/ropide-kate-plugin/ropide-kate-plugin/tests/shot_host.cpp: In function ‘int main(int, char**)’:
+/__w/ropide-kate-plugin/ropide-kate-plugin/tests/shot_host.cpp:260:17: error: ‘class QShortcut’ has no member named ‘activate’; did you mean ‘activated’?
+  260 |             sc->activate(QShortcut::ApplicationShortcut);
+      |                 ^~~~~~~~
+      |                 activated
+/__w/ropide-kate-plugin/ropide-kate-plugin/tests/shot_host.cpp:260:37: error: ‘ApplicationShortcut’ is not a member of ‘QShortcut’
+  260 |             sc->activate(QShortcut::ApplicationShortcut);
+      |                                     ^~~~~~~~~~~~~~~~~~~
+[ 50%] Building CXX object CMakeFiles/ropide-shot-host.dir/src/presets.cpp.o
+make[3]: *** [CMakeFiles/ropide-shot-host.dir/build.make:110: CMakeFiles/ropide-shot-host.dir/tests/shot_host.cpp.o] Error 1
+make[3]: *** Waiting for unfinished jobs....
+make[2]: *** [CMakeFiles/Makefile2:198: CMakeFiles/ropide-shot-host.dir/all] Error 2
+make[1]: *** [CMakeFiles/Makefile2:205: CMakeFiles/ropide-shot-host.dir/rule] Error 2
+make: *** [Makefile:208: ropide-shot-host] Error 2
