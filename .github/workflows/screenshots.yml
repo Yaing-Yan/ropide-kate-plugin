@@ -1,9 +1,11 @@
 name: Screenshots
 
-# 无头渲染 RopIDE 工具面板的各个标签页，把 PNG 作为 artifact 上传。
-# 手动触发：Actions → Screenshots → Run workflow（可选分支）
-#   或：gh workflow run screenshots.yml --ref <branch>
-# workflow_dispatch 只认默认分支上已存在的工作流，所以在 arena/* 分支上也监听 push。
+# 无头渲染 RopIDE 工具面板的各个标签页，产出 PNG。
+#
+# 说明：Actions 的日志 / artifact 下载走的是 githubusercontent.com、blob.core.windows.net
+# 等域名，受限网络里取不到，因此这里把构建日志与截图直接提交回当前分支（shots/ 与
+# ci-shots.log），用 git 就能拿到。工作流自身产生的提交（actor = github-actions[bot]）
+# 会被 job 上的 if 跳过，不会自触发。
 on:
   workflow_dispatch:
   push:
@@ -13,38 +15,53 @@ jobs:
   shots:
     name: Render UI screenshots (Arch Linux)
     runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+    permissions:
+      contents: write
     container:
       image: archlinux:base-devel
     steps:
       - name: Install dependencies
         run: |
+          set -o pipefail
           pacman -Syu --noconfirm --needed \
             git cmake make gcc \
             qt6-base \
             kcoreaddons kconfig ki18n ktexteditor kxmlgui \
             noto-fonts noto-fonts-cjk noto-fonts-emoji \
-            ttf-dejavu ttf-liberation adobe-source-code-pro-fonts
+            ttf-dejavu ttf-liberation adobe-source-code-pro-fonts 2>&1 | tail -20
 
       - name: Checkout ropide-kate-plugin
         uses: actions/checkout@v4
 
       - name: Configure
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+        run: |
+          set -o pipefail
+          cmake -B build -DCMAKE_BUILD_TYPE=Release 2>&1 | tee -a ci-shots.log
 
       - name: Build
-        run: cmake --build build -j"$(nproc)" --target ropidekate ropide-shot-host
+        run: |
+          set -o pipefail
+          cmake --build build -j"$(nproc)" --target ropidekate ropide-shot-host 2>&1 | tee -a ci-shots.log
 
       - name: Render screenshots
         run: |
+          set -o pipefail
           mkdir -p shots
           QT_QPA_PLATFORM=offscreen \
-            ./build/ropide-shot-host "$PWD/build/ropidekate.so" "$PWD/shots"
-          ls -la shots
+            ./build/ropide-shot-host "$PWD/build/ropidekate.so" "$PWD/shots" 2>&1 | tee -a ci-shots.log
+          ls -la shots | tee -a ci-shots.log
 
-      - name: Upload screenshots
-        uses: actions/upload-artifact@v4
-        with:
-          name: ropide-screenshots
-          path: |
-            shots/*.png
-          if-no-files-found: error
+      - name: Publish screenshots + build log to the branch
+        if: always()
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f ci-shots.log shots 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "nothing to publish"
+          else
+            git commit -m "CI: screenshots + build log for ${GITHUB_SHA::7}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
