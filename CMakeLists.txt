@@ -61,6 +61,16 @@ target_link_libraries(ropide-test-host PRIVATE
     Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network
     KF6::CoreAddons KF6::ConfigCore KF6::I18n KF6::TextEditor KF6::XmlGui)
 
+# 截图宿主：无头渲染工具面板的各个标签页，输出 PNG（README 配图 / 人工检查）
+add_executable(ropide-shot-host EXCLUDE_FROM_ALL tests/shot_host.cpp
+    src/rop.cpp src/compiler.cpp src/settings.cpp src/presets.cpp src/market.cpp
+    src/emu.cpp src/ropcodeeditor.cpp src/roptoolview.cpp src/ropideplugin.cpp
+    data/resources.qrc)
+target_include_directories(ropide-shot-host PRIVATE src)
+target_link_libraries(ropide-shot-host PRIVATE
+    Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network
+    KF6::CoreAddons KF6::ConfigCore KF6::I18n KF6::TextEditor KF6::XmlGui)
+
 # 插件安装目录：默认随前缀（Arch 为 /usr/lib/qt6/plugins/kf6/ktexteditor），
 # 用户安装可用 -DROPIDE_LIBDIR=lib64 之类覆盖，或直接用仓库里的 install.sh。
 set(ROPIDE_LIBDIR "lib" CACHE STRING "Library dir name under the prefix (lib / lib64)")
