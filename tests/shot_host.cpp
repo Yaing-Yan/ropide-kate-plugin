@@ -21,6 +21,8 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QPushButton>
+#include <QSyntaxHighlighter>
+#include <QTextBlock>
 #include <QTabWidget>
 #include <QTextCursor>
 #include <QTimer>
@@ -160,6 +162,27 @@ QString demoDisas()
         "0D7104    POP     PC\n");
 }
 
+/** 调试用高亮器：整块涂红字黄底，用来区分“离屏渲染问题”还是“插件数据问题”。 */
+class DbgHighlighter : public QSyntaxHighlighter
+{
+public:
+    explicit DbgHighlighter(QTextDocument *doc)
+        : QSyntaxHighlighter(doc)
+    {
+    }
+    int blocks = 0;
+
+protected:
+    void highlightBlock(const QString &text) override
+    {
+        ++blocks;
+        QTextCharFormat f;
+        f.setForeground(Qt::red);
+        f.setBackground(Qt::yellow);
+        setFormat(0, text.length(), f);
+    }
+};
+
 QPushButton *findButtonByText(QWidget *root, const QString &text)
 {
     const auto buttons = root->findChildren<QPushButton *>();
@@ -244,6 +267,21 @@ int main(int argc, char **argv)
     if (!tabs || !code) {
         std::cerr << "FAIL: tool view internals missing" << std::endl;
         return 1;
+    }
+
+    // 2.5) 调试：离屏 grab 里语法高亮颜色能不能画出来
+    {
+        const auto probe = parseRopInput(code->toPlainText(), {}, QStringLiteral("E9E0"),
+                                         QStringLiteral("D710"));
+        std::cout << "DEBUG parse lines=" << probe.highlightLines.size()
+                  << " line1 spans="
+                  << (probe.highlightLines.size() > 1 ? probe.highlightLines.at(1).size() : -1)
+                  << std::endl;
+        DbgHighlighter dbg(code->document());
+        pump(400);
+        std::cout << "DEBUG dbg blocks=" << dbg.blocks << std::endl;
+        saveShot(view, outDir + QStringLiteral("/00-debug-highlight.png"),
+                 QStringLiteral("debug 高亮（应见黄底红字）"));
     }
 
     // 3) Editor：默认态
