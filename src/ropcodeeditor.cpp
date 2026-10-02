@@ -241,7 +241,11 @@ void RopCodeEditor::setParseData(const CompileResult *result, const QVector<RopG
         m_sortedByteStarts = result->byteStartPositions;
         std::sort(m_sortedByteStarts.begin(), m_sortedByteStarts.end());
     }
+    // rehighlight() 会让文档发 textChanged；不压住 m_settingText 的话会走
+    // textEditedByUser → reparse → setParseData → rehighlight 的死循环（栈溢出崩溃）。
+    m_settingText = true;
     static_cast<RopHighlighter *>(m_highlighter)->reloadAll();
+    m_settingText = false;
     m_leftArea->update();
     m_rightArea->update();
     updateCursorInfo();
