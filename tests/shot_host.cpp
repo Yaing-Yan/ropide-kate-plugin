@@ -248,20 +248,29 @@ int main(int argc, char **argv)
                   QString::fromUtf8(QJsonDocument(sidecar).toJson(QJsonDocument::Compact)));
 
     // 2) 插件 + 真实 .rop 文档 + 工具视图
+    std::cerr << "TRACE: new RopIDEPlugin" << std::endl;
     auto *plugin = new Rop::RopIDEPlugin(nullptr);
+    std::cerr << "TRACE: Editor::instance" << std::endl;
     KTextEditor::Editor *keditor = KTextEditor::Editor::instance();
     if (!keditor) {
         std::cerr << "FAIL: no KTextEditor::Editor (katepart)" << std::endl;
         return 1;
     }
+    std::cerr << "TRACE: createDocument" << std::endl;
     KTextEditor::Document *doc = keditor->createDocument(nullptr);
+    std::cerr << "TRACE: openUrl" << std::endl;
     doc->openUrl(QUrl::fromLocalFile(ropPath));
 
+    std::cerr << "TRACE: new RopToolView" << std::endl;
     auto *view = new Rop::RopToolView(plugin, nullptr);
     view->resize(1280, 860);
+    std::cerr << "TRACE: show" << std::endl;
     view->show();
+    std::cerr << "TRACE: setActiveDocument" << std::endl;
     view->setActiveDocument(doc);
+    std::cerr << "TRACE: pump" << std::endl;
     pump(1000);
+    std::cerr << "TRACE: after pump" << std::endl;
 
     auto *tabs = view->findChild<QTabWidget *>();
     auto *code = view->findChild<Rop::RopCodeEditor *>();
