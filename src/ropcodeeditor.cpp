@@ -95,6 +95,9 @@ public:
         : QSyntaxHighlighter(editor)
         , m_editor(editor)
     {
+        // 注意：QSyntaxHighlighter(QObject*) 只是设置父对象，并不会绑定文档；
+        // 不 setDocument 的话 highlightBlock 永远不会被调用，高亮整个失效。
+        setDocument(editor->document());
     }
 
     void reloadAll()
