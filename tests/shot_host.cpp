@@ -23,6 +23,7 @@
 #include <QPushButton>
 #include <QSyntaxHighlighter>
 #include <QTextBlock>
+#include <QTextLayout>
 #include <QTabWidget>
 #include <QTextCursor>
 #include <QTimer>
@@ -277,6 +278,21 @@ int main(int argc, char **argv)
                   << " line1 spans="
                   << (probe.highlightLines.size() > 1 ? probe.highlightLines.at(1).size() : -1)
                   << std::endl;
+        // 先看（仅插件高亮器时）第二行（$entry）block layout 上的附加格式，
+        // 判断高亮是否真的写进了布局
+        const QTextBlock blk = code->document()->findBlockByNumber(1);
+        if (QTextLayout *lay = blk.layout()) {
+            const auto fr = lay->additionalFormats();
+            std::cout << "DEBUG layout formats count=" << fr.size() << std::endl;
+            for (const QTextLayout::FormatRange &r : fr) {
+                std::cout << "  range start=" << r.start << " len=" << r.length
+                          << " fg=" << r.format.foreground().color().name().toStdString()
+                          << " bg=" << r.format.background().color().name().toStdString()
+                          << std::endl;
+            }
+        } else {
+            std::cout << "DEBUG block1 has no layout" << std::endl;
+        }
         DbgHighlighter dbg(code->document());
         pump(400);
         std::cout << "DEBUG dbg blocks=" << dbg.blocks << std::endl;
