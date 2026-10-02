@@ -650,3 +650,144 @@ TRACE: openUrl
 TRACE: new RopToolView
 TRACE: show
 TRACE: setActiveDocument
+-- The CXX compiler identification is GNU 16.2.1
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/sbin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Performing Test HAVE_STDATOMIC
+-- Performing Test HAVE_STDATOMIC - Success
+-- Found WrapAtomic: TRUE
+-- Found OpenGL: /usr/lib/libOpenGL.so
+-- Found WrapOpenGL: TRUE
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
+-- Found Gettext: /usr/sbin/msgmerge (found version "1.0")
+-- Found X11: /usr/include
+-- Looking for XOpenDisplay in /usr/lib/libX11.so;/usr/lib/libXext.so
+-- Looking for XOpenDisplay in /usr/lib/libX11.so;/usr/lib/libXext.so - found
+-- Looking for gethostbyname
+-- Looking for gethostbyname - found
+-- Looking for connect
+-- Looking for connect - found
+-- Looking for remove
+-- Looking for remove - found
+-- Looking for shmat
+-- Looking for shmat - found
+-- Looking for IceConnectionNumber in ICE
+-- Looking for IceConnectionNumber in ICE - found
+-- Configuring done (1.6s)
+-- Generating done (0.1s)
+-- Build files have been written to: /__w/ropide-kate-plugin/ropide-kate-plugin/build
+[  0%] Built target ropidekate_autogen_timestamp_deps
+[  6%] Automatic MOC for target ropidekate
+[  6%] Built target ropidekate_autogen
+[ 13%] Automatic RCC for data/resources.qrc
+[ 20%] Building CXX object CMakeFiles/ropidekate.dir/src/rop.cpp.o
+[ 26%] Building CXX object CMakeFiles/ropidekate.dir/ropidekate_autogen/mocs_compilation.cpp.o
+[ 33%] Building CXX object CMakeFiles/ropidekate.dir/src/settings.cpp.o
+[ 40%] Building CXX object CMakeFiles/ropidekate.dir/src/compiler.cpp.o
+[ 46%] Building CXX object CMakeFiles/ropidekate.dir/src/presets.cpp.o
+[ 53%] Building CXX object CMakeFiles/ropidekate.dir/src/market.cpp.o
+[ 60%] Building CXX object CMakeFiles/ropidekate.dir/src/emu.cpp.o
+[ 66%] Building CXX object CMakeFiles/ropidekate.dir/src/ropcodeeditor.cpp.o
+[ 73%] Building CXX object CMakeFiles/ropidekate.dir/src/roptoolview.cpp.o
+[ 80%] Building CXX object CMakeFiles/ropidekate.dir/src/ropideplugin.cpp.o
+[ 86%] Building CXX object CMakeFiles/ropidekate.dir/ropidekate_autogen/QYFM2Z2WYQ/qrc_resources.cpp.o
+[ 93%] Linking CXX shared module ropidekate.so
+[100%] Built target ropidekate
+[  0%] Built target ropide-shot-host_autogen_timestamp_deps
+[  6%] Automatic MOC for target ropide-shot-host
+[  6%] Built target ropide-shot-host_autogen
+[ 12%] Automatic RCC for data/resources.qrc
+[ 18%] Building CXX object CMakeFiles/ropide-shot-host.dir/ropide-shot-host_autogen/mocs_compilation.cpp.o
+[ 25%] Building CXX object CMakeFiles/ropide-shot-host.dir/tests/shot_host.cpp.o
+[ 31%] Building CXX object CMakeFiles/ropide-shot-host.dir/src/rop.cpp.o
+[ 37%] Building CXX object CMakeFiles/ropide-shot-host.dir/src/compiler.cpp.o
+[ 43%] Building CXX object CMakeFiles/ropide-shot-host.dir/src/settings.cpp.o
+[ 50%] Building CXX object CMakeFiles/ropide-shot-host.dir/src/presets.cpp.o
+[ 56%] Building CXX object CMakeFiles/ropide-shot-host.dir/src/market.cpp.o
+[ 62%] Building CXX object CMakeFiles/ropide-shot-host.dir/src/emu.cpp.o
+[ 68%] Building CXX object CMakeFiles/ropide-shot-host.dir/src/ropcodeeditor.cpp.o
+[ 75%] Building CXX object CMakeFiles/ropide-shot-host.dir/src/roptoolview.cpp.o
+[ 81%] Building CXX object CMakeFiles/ropide-shot-host.dir/src/ropideplugin.cpp.o
+[ 87%] Building CXX object CMakeFiles/ropide-shot-host.dir/ropide-shot-host_autogen/QYFM2Z2WYQ/qrc_resources.cpp.o
+[ 93%] Linking CXX executable ropide-shot-host
+[100%] Built target ropide-shot-host
+plugin id=ropidekate version=0.1.3
+TRACE: new RopIDEPlugin
+TRACE: Editor::instance
+TRACE: createDocument
+TRACE: openUrl
+TRACE: new RopToolView
+TRACE: show
+TRACE: setActiveDocument
+== crashed; rerun under gdb ==
+warning: Error disabling address space randomization: Operation not permitted
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/libthread_db.so.1".
+plugin id=ropidekate version=0.1.3
+TRACE: new RopIDEPlugin
+TRACE: Editor::instance
+TRACE: createDocument
+TRACE: openUrl
+TRACE: new RopToolView
+[New Thread 0x7f00927cf6c0 (LWP 1735) (id 2)]
+[New Thread 0x7f00917ce6c0 (LWP 1736) (id 3)]
+[New Thread 0x7f008bfff6c0 (LWP 1737) (id 4)]
+TRACE: show
+[New Thread 0x7f008affe6c0 (LWP 1738) (id 5)]
+TRACE: setActiveDocument
+
+Thread 1 "ropide-shot-hos" received signal SIGSEGV, Segmentation fault.
+0x00007f00990d10b3 in ?? () from /usr/lib/libpcre2-16.so.0
+#0  0x00007f00990d10b3 in ?? () from /usr/lib/libpcre2-16.so.0
+#1  0x00007f00990d4e11 in pcre2_jit_match_16 () from /usr/lib/libpcre2-16.so.0
+#2  0x00007f00990e7d55 in pcre2_match_16 () from /usr/lib/libpcre2-16.so.0
+#3  0x00007f009bca6980 in ?? () from /usr/lib/libQt6Core.so.6
+#4  0x00007f009bca811c in ?? () from /usr/lib/libQt6Core.so.6
+#5  0x00007f009bca8c4f in QRegularExpression::match(QString const&, long long, QRegularExpression::MatchType, QFlags<QRegularExpression::MatchOption>) const () from /usr/lib/libQt6Core.so.6
+#6  0x00007f009bca8cde in QRegularExpression::globalMatch(QString const&, long long, QRegularExpression::MatchType, QFlags<QRegularExpression::MatchOption>) const () from /usr/lib/libQt6Core.so.6
+#7  0x00007f009bba35e9 in QString::replace(QRegularExpression const&, QString const&) () from /usr/lib/libQt6Core.so.6
+#8  0x000055dbf1fc3010 in Rop::parseRopInput(QString const&, QList<Rop::RopGadget> const&, QString const&, QString const&) ()
+#9  0x000055dbf1fe9912 in Rop::RopToolView::reparse() ()
+#10 0x000055dbf1fea022 in QtPrivate::QCallableObject<Rop::RopToolView::buildEditorTab()::{lambda()#4}, QtPrivate::List<>, void>::impl(int, QtPrivate::QSlotObjectBase*, QObject*, void**, bool*) ()
+#11 0x00007f009bb02ff3 in ?? () from /usr/lib/libQt6Core.so.6
+#12 0x000055dbf1fd73d5 in QtPrivate::QCallableObject<Rop::RopCodeEditor::RopCodeEditor(QWidget*)::{lambda()#1}, QtPrivate::List<>, void>::impl(int, QtPrivate::QSlotObjectBase*, QObject*, void**, bool*) ()
+#13 0x00007f009bb02ff3 in ?? () from /usr/lib/libQt6Core.so.6
+#14 0x00007f009bb02ff3 in ?? () from /usr/lib/libQt6Core.so.6
+#15 0x00007f009d3b58b7 in QWidgetTextControl::qt_metacall(QMetaObject::Call, int, void**) () from /usr/lib/libQt6Widgets.so.6
+#16 0x00007f009bb0333a in ?? () from /usr/lib/libQt6Core.so.6
+#17 0x00007f009c5cd9f7 in QTextDocumentPrivate::finishEdit() () from /usr/lib/libQt6Gui.so.6
+#18 0x00007f009c59e7bf in QSyntaxHighlighter::rehighlight() () from /usr/lib/libQt6Gui.so.6
+#19 0x000055dbf1fdedaa in Rop::RopCodeEditor::setParseData(Rop::CompileResult const*, QList<Rop::RopGadget> const*) ()
+#20 0x000055dbf1fe9e8d in Rop::RopToolView::reparse() ()
+#21 0x000055dbf1fea022 in QtPrivate::QCallableObject<Rop::RopToolView::buildEditorTab()::{lambda()#4}, QtPrivate::List<>, void>::impl(int, QtPrivate::QSlotObjectBase*, QObject*, void**, bool*) ()
+#22 0x00007f009bb02ff3 in ?? () from /usr/lib/libQt6Core.so.6
+#23 0x000055dbf1fd73d5 in QtPrivate::QCallableObject<Rop::RopCodeEditor::RopCodeEditor(QWidget*)::{lambda()#1}, QtPrivate::List<>, void>::impl(int, QtPrivate::QSlotObjectBase*, QObject*, void**, bool*) ()
+#24 0x00007f009bb02ff3 in ?? () from /usr/lib/libQt6Core.so.6
+#25 0x00007f009bb02ff3 in ?? () from /usr/lib/libQt6Core.so.6
+#26 0x00007f009d3b58b7 in QWidgetTextControl::qt_metacall(QMetaObject::Call, int, void**) () from /usr/lib/libQt6Widgets.so.6
+#27 0x00007f009bb0333a in ?? () from /usr/lib/libQt6Core.so.6
+#28 0x00007f009c5cd9f7 in QTextDocumentPrivate::finishEdit() () from /usr/lib/libQt6Gui.so.6
+#29 0x00007f009c59e7bf in QSyntaxHighlighter::rehighlight() () from /usr/lib/libQt6Gui.so.6
+total 632
+drwxr-xr-x  2 root root   4096 Oct  2 06:11 .
+drwxr-xr-x 10 1001 1001   4096 Oct  2 06:11 ..
+-rw-r--r--  1 root root  58207 Oct  2 06:11 00-debug-highlight.png
+-rw-r--r--  1 root root  68795 Oct  2 06:11 01-editor.png
+-rw-r--r--  1 root root  71169 Oct  2 06:11 02-editor-find.png
+-rw-r--r--  1 root root  70415 Oct  2 06:11 03-editor-completion.png
+-rw-r--r--  1 root root  32437 Oct  2 06:11 04-compile.png
+-rw-r--r--  1 root root  43009 Oct  2 06:11 05-gadgets.png
+-rw-r--r--  1 root root 135048 Oct  2 06:11 06-market.png
+-rw-r--r--  1 root root  47249 Oct  2 06:11 07-settings.png
+-rw-r--r--  1 root root  37472 Oct  2 06:11 08-disas.png
+-rw-r--r--  1 root root  43072 Oct  2 06:11 09-gadgets-disasm.png
+-rw-r--r--  1 root root   1262 Oct  2 06:12 demo.rop
+-rw-r--r--  1 root root     79 Oct  2 06:12 demo.ropide.json
+-rw-r--r--  1 root root    358 Oct  2 06:12 demo_disas.txt
