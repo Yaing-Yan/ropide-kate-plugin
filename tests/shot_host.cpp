@@ -21,9 +21,6 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QPushButton>
-#include <QSyntaxHighlighter>
-#include <QTextBlock>
-#include <QTextLayout>
 #include <QTabWidget>
 #include <QTextCursor>
 #include <QTimer>
@@ -163,27 +160,6 @@ QString demoDisas()
         "0D7104    POP     PC\n");
 }
 
-/** 调试用高亮器：整块涂红字黄底，用来区分“离屏渲染问题”还是“插件数据问题”。 */
-class DbgHighlighter : public QSyntaxHighlighter
-{
-public:
-    explicit DbgHighlighter(QTextDocument *doc)
-        : QSyntaxHighlighter(doc)
-    {
-    }
-    int blocks = 0;
-
-protected:
-    void highlightBlock(const QString &text) override
-    {
-        ++blocks;
-        QTextCharFormat f;
-        f.setForeground(Qt::red);
-        f.setBackground(Qt::yellow);
-        setFormat(0, text.length(), f);
-    }
-};
-
 QPushButton *findButtonByText(QWidget *root, const QString &text)
 {
     const auto buttons = root->findChildren<QPushButton *>();
@@ -248,65 +224,26 @@ int main(int argc, char **argv)
                   QString::fromUtf8(QJsonDocument(sidecar).toJson(QJsonDocument::Compact)));
 
     // 2) 插件 + 真实 .rop 文档 + 工具视图
-    std::cerr << "TRACE: new RopIDEPlugin" << std::endl;
     auto *plugin = new Rop::RopIDEPlugin(nullptr);
-    std::cerr << "TRACE: Editor::instance" << std::endl;
     KTextEditor::Editor *keditor = KTextEditor::Editor::instance();
     if (!keditor) {
         std::cerr << "FAIL: no KTextEditor::Editor (katepart)" << std::endl;
         return 1;
     }
-    std::cerr << "TRACE: createDocument" << std::endl;
     KTextEditor::Document *doc = keditor->createDocument(nullptr);
-    std::cerr << "TRACE: openUrl" << std::endl;
     doc->openUrl(QUrl::fromLocalFile(ropPath));
 
-    std::cerr << "TRACE: new RopToolView" << std::endl;
     auto *view = new Rop::RopToolView(plugin, nullptr);
     view->resize(1280, 860);
-    std::cerr << "TRACE: show" << std::endl;
     view->show();
-    std::cerr << "TRACE: setActiveDocument" << std::endl;
     view->setActiveDocument(doc);
-    std::cerr << "TRACE: pump" << std::endl;
     pump(1000);
-    std::cerr << "TRACE: after pump" << std::endl;
 
     auto *tabs = view->findChild<QTabWidget *>();
     auto *code = view->findChild<Rop::RopCodeEditor *>();
     if (!tabs || !code) {
         std::cerr << "FAIL: tool view internals missing" << std::endl;
         return 1;
-    }
-
-    // 2.5) 调试：离屏 grab 里语法高亮颜色能不能画出来
-    {
-        const auto probe = Rop::parseRopInput(code->toPlainText(), {}, QStringLiteral("E9E0"),
-                                              QStringLiteral("D710"));
-        std::cout << "DEBUG parse lines=" << probe.highlightLines.size()
-                  << " line1 spans="
-                  << (probe.highlightLines.size() > 1 ? probe.highlightLines.at(1).size() : -1)
-                  << std::endl;
-        // 先看（仅插件高亮器时）第二行（$entry）block layout 上的附加格式，
-        // 判断高亮是否真的写进了布局
-        const QTextBlock blk = code->document()->findBlockByNumber(1);
-        if (QTextLayout *lay = blk.layout()) {
-            const auto fr = lay->formats(); // Qt6 的 additionalFormats 读取口叫 formats()
-            std::cout << "DEBUG layout formats count=" << fr.size() << std::endl;
-            for (const QTextLayout::FormatRange &r : fr) {
-                std::cout << "  range start=" << r.start << " len=" << r.length
-                          << " fg=" << r.format.foreground().color().name().toStdString()
-                          << " bg=" << r.format.background().color().name().toStdString()
-                          << std::endl;
-            }
-        } else {
-            std::cout << "DEBUG block1 has no layout" << std::endl;
-        }
-        DbgHighlighter dbg(code->document());
-        pump(400);
-        std::cout << "DEBUG dbg blocks=" << dbg.blocks << std::endl;
-        saveShot(view, outDir + QStringLiteral("/00-debug-highlight.png"),
-                 QStringLiteral("debug 高亮（应见黄底红字）"));
     }
 
     // 3) Editor：默认态

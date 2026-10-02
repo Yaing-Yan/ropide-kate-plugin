@@ -2,3 +2,5 @@ build/
 compile_commands.json
 .idea/
 .vscode/
+# 截图工作流的临时构建日志（失败时才由 CI 强制提交）
+ci-shots.log

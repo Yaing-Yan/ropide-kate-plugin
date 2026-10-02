@@ -44,6 +44,23 @@ A `.rop` file is a single JSON object:
 | 🌐 | UI language 简体中文 / English (runtime switch) | 界面语言运行时切换 |
 | 👋 | Welcome / About dialog, optional on startup | 欢迎/关于页，可设置启动时弹出 |
 
+## Screenshots / 截图
+
+由 `tests/shot_host.cpp` 无头渲染（`.github/workflows/screenshots.yml`：Arch + Qt6/KF6、
+`QT_QPA_PLATFORM=offscreen`），演示数据见 `shots/demo.rop`：
+
+| Editor：语法高亮 + 左右地址栏 | Compile：hexdump + 左右地址 |
+| --- | --- |
+| ![](shots/01-editor.png) | ![](shots/04-compile.png) |
+
+| Gadgets 面板 | 程序广场（在线列表） |
+| --- | --- |
+| ![](shots/05-gadgets.png) | ![](shots/06-market.png) |
+
+| `#` gadget 补全浮层 | Disas 反汇编浏览器 |
+| --- | --- |
+| ![](shots/03-editor-completion.png) | ![](shots/08-disas.png) |
+
 ## AUTO BUILD
 
 Every push is built and tested automatically by GitHub Actions (`.github/workflows/ci.yml`):
