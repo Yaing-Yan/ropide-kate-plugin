@@ -16,13 +16,11 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QKeyEvent>
-#include <QKeySequence>
 #include <QLineEdit>
 #include <QListWidget>
 #include <QPainter>
 #include <QPixmap>
 #include <QPushButton>
-#include <QShortcut>
 #include <QTabWidget>
 #include <QTextCursor>
 #include <QTimer>
@@ -253,22 +251,26 @@ int main(int argc, char **argv)
     pump(400);
     saveShot(view, outDir + QStringLiteral("/01-editor.png"), QStringLiteral("Editor 标签页"));
 
-    // 4) Editor：Ctrl+F 查找条
-    const auto shortcuts = code->findChildren<QShortcut *>();
-    for (QShortcut *sc : shortcuts) {
-        if (sc->key() == QKeySequence(QKeySequence::Find)) {
-            sc->activate(QShortcut::ApplicationShortcut);
-            break;
-        }
-    }
+    // 4) Editor：查找条。Qt6 的 QShortcut 没有 activate()，离屏环境也不保证有活动
+    //    窗口，因此按控件树找到查找条本体（findInput → row → bar）后直接显示。
+    QWidget *findBar = nullptr;
     if (QLineEdit *findInput = findLineEditByPlaceholder(view, QStringLiteral("查找…"))) {
+        if (findInput->parentWidget()) {
+            findBar = findInput->parentWidget()->parentWidget();
+        }
+        if (findBar) {
+            findBar->setVisible(true);
+        }
         findInput->setText(QStringLiteral("loop"));
     }
     pump(400);
     saveShot(view, outDir + QStringLiteral("/02-editor-find.png"), QStringLiteral("Editor + 查找条"));
     if (QPushButton *closeBtn = findButtonByText(view, QStringLiteral("×"))) {
-        closeBtn->click();
+        closeBtn->click(); // 走真实的关闭逻辑
         pump(200);
+    }
+    if (findBar) {
+        findBar->setVisible(false);
     }
 
     // 5) Editor：gadget 补全浮层（光标停在 "#pop-er0;" 的 "#pop" 之后）
